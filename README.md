@@ -1,6 +1,6 @@
 # AgriThrive
 
-AgriThrive is a full-stack agricultural assistant platform that provides market prices, AI-powered price predictions, crop diagnosis, legal templates and advice, scheme navigation, and a chatbot assistant. The repository contains a Node/Express backend and a React + Vite + TypeScript frontend (with Supabase for auth and storage).
+AgriThrive is a full-stack agricultural assistant platform that provides market prices, AI-powered price predictions, crop diagnosis, legal templates and advice, scheme navigation, and a chatbot assistant. The repository contains a Node/Express backend and a React + Vite frontend (with Supabase for auth and storage).
 
 Live demo
 ---------
