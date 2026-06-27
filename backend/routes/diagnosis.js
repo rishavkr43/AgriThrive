@@ -4,6 +4,8 @@ const supabase = require('../config/supabase');
 const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+const GEMINI_DIAGNOSIS_MODEL = process.env.GEMINI_DIAGNOSIS_MODEL || 'gemini-3.1-flash-lite';
+
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -112,8 +114,14 @@ Carefully examine the image and return a JSON response with this exact structure
 - If unsure, set confidence to "low" and suggest consulting local agricultural expert
 - Consider common Indian crop diseases`;
 
-    // Call Gemini Vision API
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
+    // Call Gemini multimodal API
+    const model = genAI.getGenerativeModel({
+      model: GEMINI_DIAGNOSIS_MODEL,
+      generationConfig: {
+        responseMimeType: 'application/json',
+        temperature: 0.2
+      }
+    });
 
     const result = await model.generateContent([
       prompt,
@@ -154,7 +162,15 @@ Carefully examine the image and return a JSON response with this exact structure
 
   } catch (error) {
     console.error('Diagnosis error:', error);
-    res.status(500).json({ error: error.message });
+
+    if (error.message?.includes('API_KEY_INVALID')) {
+      return res.status(500).json({
+        error: 'Gemini API key is invalid. Create a valid Gemini API key in Google AI Studio and set GEMINI_API_KEY in the backend environment.',
+        model: GEMINI_DIAGNOSIS_MODEL
+      });
+    }
+
+    res.status(500).json({ error: error.message, model: GEMINI_DIAGNOSIS_MODEL });
   }
 });
 
